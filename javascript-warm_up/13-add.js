@@ -3,6 +3,7 @@
 This script add two integers
 */
 
-function add(a, b) {
-  return a + b;
+export.add = function(a, b) {
+  const sum =  a + b;
+  return sum;
 }
