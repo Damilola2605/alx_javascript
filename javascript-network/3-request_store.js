@@ -2,27 +2,32 @@
 const request = require('request');
 const fs = require('fs');
 
-const args = process.argv.slice(2);
+const url = process.argv[2]; // Get the URL from the command line argument
+const filePath = process.argv[3]; // Get the file path from the command line argument
 
-if (args.length !== 2) {
-  console.error('Usage: node webpage_scraper.js <URL> <outputFilePath>');
+if (!url || !filePath) {
+  console.error('Please provide both the URL and file path as arguments.');
   process.exit(1);
 }
 
-const url = args[0];
-const outputPath = args[1];
-
+// Send a GET request to the specified URL
 request(url, (error, response, body) => {
-  if (!error && response.statusCode === 200) {
-    // Save the webpage content to the output file with UTF-8 encoding
-    fs.writeFile(outputPath, body, 'utf-8', (err) => {
-      if (err) {
-        console.error('Error writing to file:', err);
-      } else {
-        console.log('Webpage content saved to', outputPath);
-      }
-    });
-  } else {
-    console.error('Error fetching webpage:', error);
+  if (error) {
+    console.error('Error:', error);
+    process.exit(1);
   }
+
+  if (response.statusCode !== 200) {
+    console.error('Request failed with status code:', response.statusCode);
+    process.exit(1);
+  }
+
+  // Write the response body to the specified file (UTF-8 encoded)
+  fs.writeFile(filePath, body, 'utf-8', (err) => {
+    if (err) {
+      console.error('Error writing to file:', err);
+      process.exit(1);
+    }
+    console.log(`Successfully saved the content to ${filePath}`);
+  });
 });
