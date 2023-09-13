@@ -11,7 +11,7 @@ if (!url || !filePath) {
 }
 
 // Send a GET request to the specified URL
-request(url, (error, response, body) => {
+request.get(url, (error, response, body) => {
   if (error) {
     console.error('Error:', error);
     process.exit(1);
@@ -28,6 +28,5 @@ request(url, (error, response, body) => {
       console.error('Error writing to file:', err);
       process.exit(1);
     }
-    console.log(`Successfully saved the content to ${filePath}`);
   });
 });
