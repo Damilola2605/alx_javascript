@@ -1,37 +1,28 @@
 #!/usr/bin/node
-
 const request = require('request');
+const fs = require('fs');
 
-const apiUrl = process.argv[2]; // Get the API URL from command line argument
+const args = process.argv.slice(2);
 
-if (!apiUrl) {
-  console.error('Please provide the API URL as an argument.');
+if (args.length !== 2) {
+  console.error('Usage: node webpage_scraper.js <URL> <outputFilePath>');
   process.exit(1);
 }
 
-// Character ID for Wedge Antilles
-const characterId = 18;
+const url = args[0];
+const outputPath = args[1];
 
-// Send a GET request to the Star Wars API
-request(apiUrl, (error, response, body) => {
-  if (error) {
-    console.error('Error:', error);
-    process.exit(1);
+request(url, (error, response, body) => {
+  if (!error && response.statusCode === 200) {
+    // Save the webpage content to the output file with UTF-8 encoding
+    fs.writeFile(outputPath, body, 'utf-8', (err) => {
+      if (err) {
+        console.error('Error writing to file:', err);
+      } else {
+        console.log('Webpage content saved to', outputPath);
+      }
+    });
+  } else {
+    console.error('Error fetching webpage:', error);
   }
-
-  if (response.statusCode !== 200) {
-    console.error('API request failed with status code:', response.statusCode);
-    process.exit(1);
-  }
-
-  // Parse the JSON response
-  const data = JSON.parse(body);
-
-  // Filter the films where Wedge Antilles is present
-  const filmsWithWedgeAntilles = data.results.filter((film) =>
-    film.characters.includes(`https://swapi-api.alx-tools.com/api/people/${characterId}/`)
-  );
-
-  // Print the number of films
-  console.log(filmsWithWedgeAntilles.length);
 });
