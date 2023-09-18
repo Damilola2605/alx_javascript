@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log to the Website</title>
+</head>
+<body>
+    <h1 id="welcomeMessage"></h1>
+
+    <!-- Login Form -->
+    <div id="loginForm" style="display: none;">
+        <h2>Login Form</h2>
+        <input type="text" id="firstname" placeholder="Firstname">
+        <input type="text" id="email" placeholder="Email">
+        <button id="logIn" onclick="setCookies()">Log me in</button>
+    </div>
+
+    <h1>Cookies</h1>
+    <button id="showCookie" onclick="showCookies()">Show the cookies</button>
+
+    <script>
+        function setCookies() {
+            const firstnameInput = document.getElementById('firstname');
+            const emailInput = document.getElementById('email');
+
+            // Get values from input fields
+            const firstnameValue = firstnameInput.value;
+            const emailValue = emailInput.value;
+
+            // Calculate the expiration date for the cookies (10 days from now)
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 10);
+
+            // Set cookies with expiration
+            document.cookie = `firstname=${firstnameValue}; expires=${expirationDate.toUTCString()}`;
+            document.cookie = `email=${emailValue}; expires=${expirationDate.toUTCString()}`;
+        }
+
+        function getCookie(name) {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [cookieName, cookieValue] = cookie.trim().split('=');
+                if (cookieName === name) {
+                    return decodeURIComponent(cookieValue);
+                }
+            }
+            return '';
+        }
+
+        function showCookies() {
+            // Get email and firstname cookies
+            const email = getCookie('email');
+            const firstname = getCookie('firstname');
+
+            // Create a new paragraph element
+            const paragraph = document.createElement('p');
+
+            // Set the inner HTML to display email and firstname
+            paragraph.innerHTML = `Email: ${email} - Firstname: ${firstname}`;
+
+            // Append the paragraph to the bottom of the page
+            document.getElementById('cookieDisplay').appendChild(paragraph);
+        }
+
+        function showForm() {
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            const loginForm = document.getElementById('loginForm');
+
+            // Hide the welcome message
+            welcomeMessage.style.display = 'none';
+
+            // Show the login form
+            loginForm.style.display = 'block';
+        }
+
+        function hideForm() {
+            const loginForm = document.getElementById('loginForm');
+
+            // Hide the login form
+            loginForm.style.display = 'none';
+        }
+
+        function deleteCookiesAndShowForm() {
+            // Delete cookies
+            document.cookie = 'firstname=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            document.cookie = 'email=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+
+            // Show the login form
+            showForm();
+        }
+
+        function showWelcomeMessageOrForm() {
+            const firstname = getCookie('firstname');
+            const welcomeMessage = document.getElementById('welcomeMessage');
+
+            if (firstname) {
+                // User is logged in
+                welcomeMessage.innerHTML = `Welcome: ${firstname} <a href="#" id="logoutLink">(logout)</a>`;
+                welcomeMessage.style.fontWeight = 'normal';
+                welcomeMessage.style.fontStyle = 'italic';
+                welcomeMessage.style.marginRight = '10px';
+
+                // Add click event for logout link
+                const logoutLink = document.getElementById('logoutLink');
+                logoutLink.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent the link from navigating
+                    deleteCookiesAndShowForm();
+                    welcomeMessage.style.display = 'none';
+                    showForm();
+                });
+            } else {
+                // User is not logged in, show the login form
+                showForm();
+            }
+        }
+
+        // Call the function to determine whether to show the welcome message or login form
+        showWelcomeMessageOrForm();
+    </script>
+</body>
+</html>
