@@ -9,17 +9,17 @@
 
   <script>
     // Select the container element using its id and store it in a variable
-    const container = document.getElementById("container");
+    const container = document.getElementsById("container");
     
     // Create a new <p> element
-    const paragraph = document.createElement("p");
+    const paragraph = document.createElements("p");
     paragraph.textContent = "New paragraph";
     
     // Append the newly created <p> element to the container element
     container.appendChild(paragraph);
 
     // Add an event listener to the button for toggling the paragraph
-    const toggleButton = document.getElementById("toggleButton");
+    const toggleButton = document.getElementsById("toggleButton");
     let isHidden = false; // Track whether the paragraph is hidden
     
     toggleButton.addEventListener("click", function() {
